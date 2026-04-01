@@ -1,10 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>注文フォーム</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+  <h2>注文フォーム</h2>
 
-# Please enter the commit message for your changes. Lines starting
-# with '#' will be ignored, and an empty message aborts the commit.
-#
-# On branch main
-# Your branch is up to date with 'origin/main'.
-#
-# Changes to be committed:
-#	modified:   README.md
-#
+  <form id="orderForm">
+    <label>名前:</label><br>
+    <input type="text" id="name" required><br><br>
+
+    <label>商品:</label><br>
+    <input type="text" id="product" required><br><br>
+
+    <label>日付:</label><br>
+    <input type="date" id="date" required><br><br>
+
+    <label>人数:</label><br>
+    <input type="number" id="people" required><br><br>
+
+    <button type="submit">送信</button>
+  </form>
+
+  <script>
+    const LIFF_ID = "YOUR_LIFF_ID"; // ←自分のLIFF IDに変更
+
+    async function main() {
+      await liff.init({ liffId: LIFF_ID });
+
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+      }
+    }
+
+    main();
+
+    document.getElementById("orderForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const product = document.getElementById("product").value;
+      const date = document.getElementById("date").value;
+      const people = document.getElementById("people").value;
+
+      const message = `
+【注文内容】
+名前: ${name}
+商品: ${product}
+日付: ${date}
+人数: ${people}名
+      `;
+
+      try {
+        await liff.sendMessages([
+          {
+            type: "text",
+            text: message
+          }
+        ]);
+
+        alert("注文内容を送信しました！");
+        liff.closeWindow();
+
+      } catch (err) {
+        alert("送信に失敗しました: " + err);
+      }
+    });
+  </script>
+</body>
+</html>
